@@ -4,24 +4,11 @@ use std::rc::Rc;
 
 trait RoadCrosser {
     fn cross_road(&self) -> Result<(), Box<dyn Any>>;
-    /*
-    fn cross_road(&self) -> Result<(), Box<dyn Any>> {
-        let state = Rc::clone(&self.state().borrow());
-        state.cross_road(self)
-    }
-    */
-    /*
-    fn cross_road(self: Box<Self>) -> Result<(), Box<dyn Any>> {
-        let state = Rc::clone(&self.state().borrow());
-        state.cross_road(self)
-    }
-    */
     fn state(&self) -> &RefCell<Rc<Box<dyn RoadCrosserState>>>;
 }
 
 trait RoadCrosserState {
-    //fn cross_road(&self, road_crosser: &dyn RoadCrosser) -> Result<(), Box<dyn Any>>;
-    fn cross_road(&self, road_crosser: Box<dyn RoadCrosser>) -> Result<(), Box<dyn Any>>;
+    fn cross_road(&self, road_crosser: &dyn RoadCrosser) -> Result<(), Box<dyn Any>>;
 }
 
 struct UnawareCrosser {
@@ -35,8 +22,7 @@ impl UnawareCrosser {
 }
 
 impl RoadCrosserState for UnawareCrosser {
-    //fn cross_road(&self, road_crosser: &dyn RoadCrosser) -> Result<(), Box<dyn Any>> {
-    fn cross_road(&self, road_crosser: Box<dyn RoadCrosser>) -> Result<(), Box<dyn Any>> {
+    fn cross_road(&self, road_crosser: &dyn RoadCrosser) -> Result<(), Box<dyn Any>> {
         Ok(())
     }
 }
@@ -58,7 +44,7 @@ impl RoadCrosser for Chicken {
         &self.state
     }
 
-    fn cross_road(self: &Box<dyn RoadCrosser>) -> Result<(), Box<dyn Any>> {
+    fn cross_road(&self) -> Result<(), Box<dyn Any>> {
         let state = Rc::clone(&self.state().borrow());
         state.cross_road(self)
     }
